@@ -7,6 +7,22 @@
 
 import Foundation
 
+public struct DataCollection {
+    public var solutions: [Solution]
+    public var tags: [Tag]
+    public var processes: [DDProcess]
+    public var flows: [Flow]
+    public var steps: [Step]
+    public var techSteps: [TechStep]
+    public var responsibles: [Responsible]
+    public var systems: [System]
+    //TODO: other data
+    
+//    static func create(solutions: [Solution], tags: [Tag], processes : [DDProcess], flows: [Flow], steps: [Step], techSteps: [TechStep]) -> DataCollection {
+//        return DataCollection(solutions: solutions, tags: tags, processes: processes, flows: flows, steps: steps, techSteps: techSteps, responsibles: responsibles) // public initializer (free initializer is not available externally)
+//    }
+}
+
 public enum Language: String {
     case EN
     case RU
@@ -36,7 +52,7 @@ public struct System: DDCoreData {
 }
 
 // declaration here, extensions in dataProcessing.swift
-public protocol DDCoreData : Codable & Identifiable {
+public protocol DDCoreData : Codable & Identifiable & Equatable {
     typealias DDID = String   // Just an alias for looks, althouth might make it a real type in the future
     var id: DDID { get }  // id is obligatory for any data
 }
@@ -71,7 +87,7 @@ public struct Step : DDCoreData {
     public var description: [String: String]   // [Language: String]
     public var responsible: Responsible.DDID
     public var systems : [System.DDID]  // [System]
-    public var bpSteps: [BPStep.DDID]
+    public var techSteps: [TechStep.DDID]
     public var umSteps: [UMStep.DDID]
 }
 
@@ -92,16 +108,11 @@ public struct Flow : DDCoreData {
 public struct Solution: DDCoreData {
     public let id: DDID
     public var name: [String: String]  // [Language: String]
-    public var businessProcesses: [BusinessProcess.DDID]
-    public init (id: DDID, name: [String: String], businessProcesses: [BusinessProcess.DDID]) {
-        self.id = id
-        self.name = name
-        self.businessProcesses = businessProcesses
-    }
+    public var processes: [DDProcess.DDID]
 }
 
 // business process, e.g. Goods receipt from Truck
-public struct BusinessProcess : DDCoreData {
+public struct DDProcess : DDCoreData {
     public let id: DDID
     public var name: [String: String]  // [Language: String]
     public var flows: [Flow.DDID]
@@ -146,11 +157,9 @@ public struct UserManual : DDCoreData {
     public var umSteps: [UMStep.DDID]
 }
 
-// represents a separate Business process step, e.g. task creation
-public struct BPStep : DDCoreData {
+// represents a separate technical process step, e.g. destination bin determination
+public struct TechStep : DDCoreData {
     public let id: DDID
     public var name: [String: String]  // [Language: String]
-    public var isGlobal: Bool
-    public var relevantTags: [Tag.DDID]
     public var description: [String: String]   // [Language: String]
 }
