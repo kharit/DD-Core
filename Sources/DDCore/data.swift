@@ -14,7 +14,7 @@ public struct DataCollection {
     public var flows: [Flow]
     public var steps: [Step]
     public var techSteps: [TechStep]
-    public var responsibles: [Responsible]
+    public var responsibles: [String: Responsible]
     public var systems: [System]
     //TODO: other data
     
@@ -73,10 +73,6 @@ public struct User : DDCoreData {
 public struct Tag : DDCoreData {
     public let id: DDID
     public var name: [String: String]  // [Language: String]
-    public init (id: DDID, name: [String: String]) {
-        self.id = id
-        self.name = name
-    }
 }
 
 // business process step, e.g. Loading or Picking
@@ -97,12 +93,6 @@ public struct Flow : DDCoreData {
     public var name: [String: String]  // [Language: String]
     public var steps: [Step.DDID]
     public var description: [String: String]   // [Language: String]
-    public init(id: DDID, name: [String: String], steps: [Step.DDID], description: [String: String]) {
-        self.id = id
-        self.name = name
-        self.steps = steps
-        self.description = description
-    }
 }
 
 public struct Solution: DDCoreData {
@@ -118,13 +108,6 @@ public struct DDProcess : DDCoreData {
     public var flows: [Flow.DDID]
     public var relevantTags: [Tag.DDID]
     public var description: [String: String]   // [Language: String]
-    public init(id: DDID, name: [String: String], flows: [Flow.DDID], relevantTags: [Tag.DDID], description: [String: String]) {
-        self.id = id
-        self.name = name
-        self.flows = flows
-        self.relevantTags = relevantTags
-        self.description = description
-    }
 }
 
 // will be done after MVP
