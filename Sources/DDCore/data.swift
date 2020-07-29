@@ -14,7 +14,7 @@ public struct DataCollection {
     public var flows: [Flow]
     public var steps: [Step]
     public var techSteps: [TechStep]
-    public var responsibles: [String: Responsible]
+    public var responsibles: [Responsible]
     public var systems: [System]
     //TODO: other data
     
@@ -48,7 +48,7 @@ public enum StepType: String {
 
 public struct System: DDCoreData {
     public let id: DDID
-    public var name: [String: String]  // [Language: String]
+    public var name: String
 }
 
 // declaration here, extensions in dataProcessing.swift
@@ -59,7 +59,7 @@ public protocol DDCoreData : Codable & Identifiable & Equatable {
 
 public struct Responsible : DDCoreData {
     public let id: DDID
-    public var name: [String: String]  // [Language: String]
+    public var name: String
 }
 
 // a user of the system
@@ -72,15 +72,15 @@ public struct User : DDCoreData {
 // an organisation for which a step is relevant, e.g. US or Germany
 public struct Tag : DDCoreData {
     public let id: DDID
-    public var name: [String: String]  // [Language: String]
+    public var name: String
 }
 
 // business process step, e.g. Loading or Picking
 public struct Step : DDCoreData {
     public let id: DDID
-    public var name: [String: String]  // [Language: String]
+    public var name: String
     public var stepType: String    // StepType
-    public var description: [String: String]   // [Language: String]
+    public var description: String
     public var responsible: Responsible.DDID
     public var systems : [System.DDID]  // [System]
     public var techSteps: [TechStep.DDID]
@@ -90,37 +90,37 @@ public struct Step : DDCoreData {
 // separate flow, e.g. Goods receipt from Supplier
 public struct Flow : DDCoreData {
     public let id: DDID
-    public var name: [String: String]  // [Language: String]
+    public var name: String
     public var steps: [Step.DDID]
-    public var description: [String: String]   // [Language: String]
+    public var description: String
 }
 
 public struct Solution: DDCoreData {
     public let id: DDID
-    public var name: [String: String]  // [Language: String]
+    public var name: String
     public var processes: [DDProcess.DDID]
 }
 
 // business process, e.g. Goods receipt from Truck
 public struct DDProcess : DDCoreData {
     public let id: DDID
-    public var name: [String: String]  // [Language: String]
+    public var name: String
     public var flows: [Flow.DDID]
     public var relevantTags: [Tag.DDID]
-    public var description: [String: String]   // [Language: String]
+    public var description: String
 }
 
 // will be done after MVP
 public struct ScriptStep : DDCoreData {
     public let id: DDID
-    public var name: [String: String]  // [Language: String]
+    public var name: String
     // TODO: finish
 }
 
 // just a template, will be done after MVP
 public struct Script : DDCoreData {
     public let id: DDID
-    public var name: [String: String]  // [Language: String]
+    public var name: String
     public var scriptSteps: [ScriptStep.DDID]
     public var relevantTags: [Tag.DDID]
 }
@@ -128,21 +128,21 @@ public struct Script : DDCoreData {
 // just a template, will be done after MVP
 public struct UMStep : DDCoreData {
     public let id: DDID
-    public var name: [String: String]  // [Language: String]
+    public var name: String
     public var transaction: String
-    public var description: [String: String]   // [Language: String]
+    public var description: String
 }
 
 // just a template, will be done after MVP
 public struct UserManual : DDCoreData {
     public let id: DDID
-    public var name: [String: String]  // [Language: String]
+    public var name: String
     public var umSteps: [UMStep.DDID]
 }
 
 // represents a separate technical process step, e.g. destination bin determination
 public struct TechStep : DDCoreData {
     public let id: DDID
-    public var name: [String: String]  // [Language: String]
-    public var description: [String: String]   // [Language: String]
+    public var name: String
+    public var description: String
 }
