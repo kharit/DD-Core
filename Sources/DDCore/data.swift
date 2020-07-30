@@ -23,6 +23,11 @@ public struct DataCollection {
 //    }
 }
 
+func generateID() -> String {
+  let letters = "abcdefghijklmnopqrstuvwxyz0123456789"
+  return String((0..<32).map{ _ in letters.randomElement()! })
+}
+
 public enum Language: String {
     case EN
     case RU
@@ -85,6 +90,17 @@ public struct Step : DDCoreData {
     public var systems : [System.DDID]  // [System]
     public var techSteps: [TechStep.DDID]
     public var umSteps: [UMStep.DDID]
+    
+    public static func create() -> Step {
+        Step(
+            id: generateID(),
+            name: "", stepType: StepType.Manual.rawValue,
+            description: "",
+            responsible: "",
+            systems: [],
+            techSteps: [],
+            umSteps: [])
+    }
 }
 
 // separate flow, e.g. Goods receipt from Supplier
