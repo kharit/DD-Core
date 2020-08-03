@@ -9,10 +9,13 @@ import Foundation
 
 public extension DataManager {
     
+    static func initWithTestFolder() -> DataManager {
+        return DataManager(dataSource: DataSource.initProject(projectName: "TestLocalJSON"))
+    }
+    
     static func initWithTestData() -> DataManager {
         return DataManager(
-            dataSource: DataSource(
-                type: .None,
+            dataSource: DataSource.initFromData(
                 dataCollection: DataCollection(
                     solutions: [
                         Solution(id: "ERP01", name: "ERP 01", processes: ["21"]),
@@ -73,4 +76,66 @@ public extension DataManager {
         returnArray.append(Step(id: "41", name: "Create picking tasks", stepType: StepType.Manual.rawValue, description: "User goes to the transaction for creating picking tasks, finds a delivery using some number. Then presses the button Create picking tasks", responsible: "51", systems: ["61"], techSteps: ["71", "72", "73"], umSteps: []))
         return returnArray
     }
+}
+
+extension DDFileManager {
+    
+    func saveTestData(dataCollection: DataCollection) throws {
+        try fileManager.createDirectory(atPath: "\(workingDirectory)solutions/", withIntermediateDirectories: true)
+        for solution in dataCollection.solutions {
+            if let JSONData = try? JSONEncoder().encode(solution) {
+                fileManager.createFile(atPath: "\(workingDirectory)solutions/\(solution.id)", contents: JSONData)
+            }
+        }
+        
+        try fileManager.createDirectory(atPath: "\(workingDirectory)tags/", withIntermediateDirectories: true)
+        for tag in dataCollection.tags {
+            if let JSONData = try? JSONEncoder().encode(tag) {
+                fileManager.createFile(atPath: "\(workingDirectory)tags/\(tag.id)", contents: JSONData)
+            }
+        }
+        
+        try fileManager.createDirectory(atPath: "\(workingDirectory)processes/", withIntermediateDirectories: true)
+        for process in dataCollection.processes {
+            if let JSONData = try? JSONEncoder().encode(process) {
+                fileManager.createFile(atPath: "\(workingDirectory)processes/\(process.id)", contents: JSONData)
+            }
+        }
+        
+        try fileManager.createDirectory(atPath: "\(workingDirectory)flows/", withIntermediateDirectories: true)
+        for flow in dataCollection.flows {
+            if let JSONData = try? JSONEncoder().encode(flow) {
+                fileManager.createFile(atPath: "\(workingDirectory)flows/\(flow.id)", contents: JSONData)
+            }
+        }
+        
+        try fileManager.createDirectory(atPath: "\(workingDirectory)steps/", withIntermediateDirectories: true)
+        for step in dataCollection.steps {
+            if let JSONData = try? JSONEncoder().encode(step) {
+                fileManager.createFile(atPath: "\(workingDirectory)steps/\(step.id)", contents: JSONData)
+            }
+        }
+        
+        try fileManager.createDirectory(atPath: "\(workingDirectory)techSteps/", withIntermediateDirectories: true)
+        for techStep in dataCollection.techSteps {
+            if let JSONData = try? JSONEncoder().encode(techStep) {
+                fileManager.createFile(atPath: "\(workingDirectory)techSteps/\(techStep.id)", contents: JSONData)
+            }
+        }
+        
+        try fileManager.createDirectory(atPath: "\(workingDirectory)responsibles/", withIntermediateDirectories: true)
+        for responsible in dataCollection.responsibles {
+            if let JSONData = try? JSONEncoder().encode(responsible) {
+                fileManager.createFile(atPath: "\(workingDirectory)responsibles/\(responsible.id)", contents: JSONData)
+            }
+        }
+        
+        try fileManager.createDirectory(atPath: "\(workingDirectory)systems/", withIntermediateDirectories: true)
+        for system in dataCollection.systems {
+            if let JSONData = try? JSONEncoder().encode(system) {
+                fileManager.createFile(atPath: "\(workingDirectory)systems/\(system.id)", contents: JSONData)
+            }
+        }
+    }
+    
 }

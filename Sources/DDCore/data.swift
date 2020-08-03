@@ -18,13 +18,17 @@ public struct DataCollection {
     public var systems: [System]
     //TODO: other data
     
+    static func createEmpty() -> DataCollection {
+        return DataCollection(solutions: [Solution](), tags: [Tag](), processes: [DDProcess](), flows: [Flow](), steps: [Step](), techSteps: [TechStep](), responsibles: [Responsible](), systems: [System]())
+    }
+    
 //    static func create(solutions: [Solution], tags: [Tag], processes : [DDProcess], flows: [Flow], steps: [Step], techSteps: [TechStep]) -> DataCollection {
 //        return DataCollection(solutions: solutions, tags: tags, processes: processes, flows: flows, steps: steps, techSteps: techSteps, responsibles: responsibles) // public initializer (free initializer is not available externally)
 //    }
 }
 
 func generateID() -> String {
-  let letters = "abcdefghijklmnopqrstuvwxyz0123456789"
+  let letters = "abcdef0123456789"
   return String((0..<32).map{ _ in letters.randomElement()! })
 }
 
@@ -54,6 +58,13 @@ public enum StepType: String {
 public struct System: DDCoreData {
     public let id: DDID
     public var name: String
+    
+    public static func create() -> System {
+        System(
+            id: generateID(),
+            name: ""
+        )
+    }
 }
 
 // declaration here, extensions in dataProcessing.swift

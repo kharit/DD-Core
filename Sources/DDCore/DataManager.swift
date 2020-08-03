@@ -130,6 +130,16 @@ public struct DataManager {
         }
     }
     
+    public mutating func addSystem(_ system: System) {
+        
+        // update the data
+        dataSource.addSystem(system)
+
+        
+        // update the views
+        displayData.systems.append(system)
+    }
+    
     init(dataSource: DataSource) {
         self.dataSource = dataSource
         self.displayData = dataSource.dataCollection
