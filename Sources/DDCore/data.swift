@@ -76,6 +76,13 @@ public protocol DDCoreData : Codable & Identifiable & Equatable {
 public struct Responsible : DDCoreData {
     public let id: DDID
     public var name: String
+    
+    public static func create() -> Responsible {
+        Responsible(
+            id: generateID(),
+            name: ""
+        )
+    }
 }
 
 // a user of the system

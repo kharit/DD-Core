@@ -131,13 +131,19 @@ public struct DataManager {
     }
     
     public mutating func addSystem(_ system: System) {
-        
         // update the data
         dataSource.addSystem(system)
 
-        
         // update the views
         displayData.systems.append(system)
+    }
+    
+    public mutating func addResponsible(_ responsible: Responsible) {
+        // update the data
+        dataSource.addResponsible(responsible)
+
+        // update the views
+        displayData.responsibles.append(responsible)
     }
     
     init(dataSource: DataSource) {

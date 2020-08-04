@@ -140,4 +140,15 @@ struct DDFileManager {
         }
         
     }
+    
+    func changeResponsible(_ responsible: Responsible, dataSourceType: DataSourceType) throws {
+        switch dataSourceType {
+        case .LocalJSON:
+            let responsibleFile = try jsonEncoder.encode(responsible)
+            fileManager.createFile(atPath:  "\(self.workingDirectory)responsibles/\(responsible.id).json", contents: responsibleFile)
+        default:
+            print("E: Data source type is incorrect")
+        }
+        
+    }
 }

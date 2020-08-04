@@ -75,6 +75,22 @@ struct DataSource {
         dataCollection.systems.append(system)
     }
     
+    mutating func addResponsible(_ responsible: Responsible) {
+        
+        switch type {
+        case .None:
+            print("I: Just testing, nothing to update")
+        case .LocalJSON:
+            do {
+                try fileManager.changeResponsible(responsible, dataSourceType: .LocalJSON)
+            } catch {
+                print(error)
+            }
+        }
+        
+        dataCollection.responsibles.append(responsible)
+    }
+    
     static func initFromData(dataCollection: DataCollection) -> DataSource {
         var dataSource = DataSource()
         dataSource.dataCollection = dataCollection
