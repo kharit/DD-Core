@@ -34,24 +34,65 @@ struct DDFileManager {
     }
     
     // insane function that returns a function that returns an array of a customType
-    func createDataReader<T>(dataSourceType: DataSourceType, dataType: T.Type, folderName: String) -> (() throws -> [T]) where T : Decodable {
-        return {
-            var returnArray = [T]()
-            if let folderContents = try? self.fileManager.contentsOfDirectory(atPath: "\(self.workingDirectory)\(folderName)/") {
-                for elementID in folderContents {
-                    if let elementFile = self.fileManager.contents(atPath: self.workingDirectory + "\(folderName)/\(elementID)") {
-                        switch dataSourceType {
-                        case .LocalJSON:
-                            let element = try self.jsonDecoder.decode(dataType, from: elementFile)
-                            returnArray.append(element)
-                        default:
-                            print("E: dataSourceType is incorrect")
-                        }
+    func readData<T>(dataSourceType: DataSourceType, dataType: T.Type, folderName: String) throws -> [T] where T: DDCoreData {
+        var returnArray = [T]()
+        if let folderContents = try? self.fileManager.contentsOfDirectory(atPath: "\(self.workingDirectory)\(folderName)/") {
+            for elementID in folderContents {
+                if let elementFile = self.fileManager.contents(atPath: self.workingDirectory + "\(folderName)/\(elementID)") {
+                    switch dataSourceType {
+                    case .LocalJSON:
+                        let element = try self.jsonDecoder.decode(dataType, from: elementFile)
+                        returnArray.append(element)
+                    default:
+                        print("E: dataSourceType is incorrect")
                     }
                 }
             }
-            return returnArray
         }
+        return returnArray
+    }
+    
+    func delete<T>(_ object: T, dataSourceType: DataSourceType) throws where T: DDCoreData {
+        
+        var folderName = ""
+        var fileName = ""
+        
+        if let solution = object as? Solution {
+            folderName = "solutions/"
+            fileName = solution.id
+        } else if let tag = object as? Tag {
+            folderName = "tags/"
+            fileName = tag.id
+        } else if let process = object as? DDProcess {
+            folderName = "processes/"
+            fileName = process.id
+        } else if let flow = object as? Flow {
+            folderName = "flows/"
+            fileName = flow.id
+        } else if let step = object as? Step {
+            folderName = "steps/"
+            fileName = step.id
+        } else if let techStep = object as? TechStep {
+            folderName = "techSteps/"
+            fileName = techStep.id
+        } else if let responsible = object as? Responsible {
+            folderName = "responsibles/"
+            fileName = responsible.id
+        } else if let system = object as? System {
+            folderName = "systems/"
+            fileName = system.id
+        } else {
+            print("E: Didn't find a correct data type to delete data for disk")
+        }
+        
+        switch dataSourceType {
+        case .LocalJSON:
+            fileName += ".json"
+        default:
+            print("E: dataSourceType is incorrect")
+        }
+        
+        try fileManager.removeItem(atPath: workingDirectory + folderName + fileName)
     }
     
     mutating func initData(projectName: String) throws -> (DataSourceType, DataCollection)  {
@@ -74,36 +115,28 @@ struct DDFileManager {
         var dataCollection = DataCollection.createEmpty()
         
         // Solutions
-        let solutionReader = createDataReader(dataSourceType: dataSourceType, dataType: Solution.self, folderName: "solutions")
-        dataCollection.solutions = try solutionReader()
+        dataCollection.solutions = try readData(dataSourceType: dataSourceType, dataType: Solution.self, folderName: "solutions")
         
         // Tags
-        let tagReader = createDataReader(dataSourceType: dataSourceType, dataType: Tag.self, folderName: "tags")
-        dataCollection.tags = try tagReader()
+        dataCollection.tags = try readData(dataSourceType: dataSourceType, dataType: Tag.self, folderName: "tags")
         
         // Processes
-        let processReader = createDataReader(dataSourceType: dataSourceType, dataType: DDProcess.self, folderName: "processes")
-        dataCollection.processes = try processReader()
+        dataCollection.processes = try readData(dataSourceType: dataSourceType, dataType: DDProcess.self, folderName: "processes")
         
         // Flows
-        let flowReader = createDataReader(dataSourceType: dataSourceType, dataType: Flow.self, folderName: "flows")
-        dataCollection.flows = try flowReader()
+        dataCollection.flows = try readData(dataSourceType: dataSourceType, dataType: Flow.self, folderName: "flows")
         
         // Steps
-        let stepReader = createDataReader(dataSourceType: dataSourceType, dataType: Step.self, folderName: "steps")
-        dataCollection.steps = try stepReader()
+        dataCollection.steps = try readData(dataSourceType: dataSourceType, dataType: Step.self, folderName: "steps")
         
         // TechSteps
-        let techStepReader = createDataReader(dataSourceType: dataSourceType, dataType: TechStep.self, folderName: "techSteps")
-        dataCollection.techSteps = try techStepReader()
+        dataCollection.techSteps = try readData(dataSourceType: dataSourceType, dataType: TechStep.self, folderName: "techSteps")
         
         // Responsibles
-        let responsibleReader = createDataReader(dataSourceType: dataSourceType, dataType: Responsible.self, folderName: "responsibles")
-        dataCollection.responsibles = try responsibleReader()
+        dataCollection.responsibles = try readData(dataSourceType: dataSourceType, dataType: Responsible.self, folderName: "responsibles")
         
         // Systems
-        let systemReader = createDataReader(dataSourceType: dataSourceType, dataType: System.self, folderName: "systems")
-        dataCollection.systems = try systemReader()
+        dataCollection.systems = try readData(dataSourceType: dataSourceType, dataType: System.self, folderName: "systems")
         
         return (dataSourceType, dataCollection)
     }
@@ -138,7 +171,16 @@ struct DDFileManager {
         default:
             print("E: Data source type is incorrect")
         }
-        
+    }
+    
+    func changeSolution(_ solution: Solution, dataSourceType: DataSourceType) throws {
+        switch dataSourceType {
+        case .LocalJSON:
+            let solutionFile = try jsonEncoder.encode(solution)
+            fileManager.createFile(atPath:  "\(self.workingDirectory)solutions/\(solution.id).json", contents: solutionFile)
+        default:
+            print("E: Data source type is incorrect")
+        }
     }
     
     func changeResponsible(_ responsible: Responsible, dataSourceType: DataSourceType) throws {

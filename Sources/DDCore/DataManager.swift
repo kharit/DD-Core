@@ -104,7 +104,7 @@ public struct DataManager {
         displayData.techSteps = displayTechSteps
     }
     
-    public mutating func saveStep(_ step: Step) {
+    public mutating func updateStep(_ step: Step) {
         dataSource.updateStep(step)
         let index = displayData.steps.firstIndex(where: { $0.id == step.id })!
         displayData.steps[index] = step
@@ -144,6 +144,65 @@ public struct DataManager {
 
         // update the views
         displayData.responsibles.append(responsible)
+    }
+    
+    public mutating func updateSystem(_ system: System) {
+        dataSource.updateSystem(system)
+        let index = displayData.systems.firstIndex(where: { $0.id == system.id })!
+        displayData.systems[index] = system
+    }
+    
+    public mutating func updateSolution(_ solution: Solution) {
+        dataSource.updateSolution(solution)
+        let index = displayData.solutions.firstIndex(where: { $0.id == solution.id })!
+        displayData.solutions[index] = solution
+    }
+    
+    func defineObjectsAttachedToSingleSolution<T>(_ solution: Solution) -> [T] where T: DDCoreData {
+        var theObjects = [T]()
+        
+        return theObjects
+    }
+    
+    mutating func removeFromDisplay<T>(_ object: T) where T: DDCoreData {
+        // TODO: update all link?!?
+        if let solution = object as? Solution {
+            let index = displayData.solutions.firstIndex(where: { $0.id == solution.id })!
+            displayData.solutions.remove(at: index)
+        } else if let tag = object as? Tag {
+            let index = displayData.tags.firstIndex(where: { $0.id == tag.id })!
+            displayData.tags.remove(at: index)
+        } else if let process = object as? DDProcess {
+            let index = displayData.processes.firstIndex(where: { $0.id == process.id })!
+            displayData.processes.remove(at: index)
+        } else if let flow = object as? Flow {
+            let index = displayData.flows.firstIndex(where: { $0.id == flow.id })!
+            displayData.flows.remove(at: index)
+        } else if let step = object as? Step {
+            let index = displayData.steps.firstIndex(where: { $0.id == step.id })!
+            displayData.steps.remove(at: index)
+        } else if let techStep = object as? TechStep {
+            let index = displayData.techSteps.firstIndex(where: { $0.id == techStep.id })!
+            displayData.techSteps.remove(at: index)
+        } else if let responsible = object as? Responsible {
+            let index = displayData.responsibles.firstIndex(where: { $0.id == responsible.id })!
+            displayData.responsibles.remove(at: index)
+        } else if let system = object as? System {
+            let index = displayData.systems.firstIndex(where: { $0.id == system.id })!
+            displayData.systems.remove(at: index)
+        } else {
+            print("E: Didn't find a correct data type to remove from data collection")
+        }
+    }
+    
+    public mutating func deleteSolution(_ solution: Solution) {
+//        let objectsToDelete = defineObjectsAttachedToSingleSolution(solution)
+//        for object in objectsToDelete {
+//            dataSource.delete(object)
+//            removeFromDisplay(object)
+//        }
+        dataSource.delete(solution)
+        removeFromDisplay(solution)
     }
     
     init(dataSource: DataSource) {
